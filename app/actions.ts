@@ -2,7 +2,7 @@
 
 import { Model } from "@/components/NavBar";
 import { JSONValue } from "@/types/json";
-import { cosineSimilarity, generateText } from "ai";
+import { generateText } from "ai";
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { createOpenAI } from "@ai-sdk/openai";
 
