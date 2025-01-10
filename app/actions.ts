@@ -3,8 +3,8 @@
 import { Model } from "@/components/NavBar";
 import { JSONValue } from "@/types/json";
 import { generateText } from "ai";
-import { anthropic } from "@ai-sdk/anthropic";
-import { openai } from "@ai-sdk/openai";
+import { createAnthropic } from "@ai-sdk/anthropic";
+import { createOpenAI } from "@ai-sdk/openai";
 
 const systemPrompt = `
 You are a data generator. 
@@ -24,20 +24,24 @@ const generateUserPrompt = (schema: JSONValue, context: string) => {
   `;
 };
 
-const getProvider = (model: Model) => {
+const getProvider = (model: Model, apiKey: string) => {
   if (model.provider === "anthropic") {
+    const anthropic = createAnthropic({ apiKey });
     return anthropic(model.value);
   }
+
+  const openai = createOpenAI({ apiKey });
   return openai(model.value);
 };
 
 export async function generateData(
   schema: JSONValue,
   context: string,
-  model: Model
+  model: Model,
+  apiKey: string
 ) {
   try {
-    const provider = getProvider(model);
+    const provider = getProvider(model, apiKey);
 
     const result = await generateText({
       model: provider,

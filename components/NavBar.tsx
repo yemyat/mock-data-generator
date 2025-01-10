@@ -12,7 +12,8 @@ import {
 } from "./ui/select";
 import { useJSON } from "@/contexts/JSONContext";
 import { generateData } from "@/app/actions";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "@/hooks/use-toast";
 
 export interface Model {
   value: string;
@@ -38,24 +39,62 @@ export const modelOptions: Model[] = [
 export function NavBar() {
   const { inputJsonData, context, setOutputJsonData: setJsonData } = useJSON();
   const [model, setModel] = useState<Model>(modelOptions[0]);
+  const [apiKey, setApiKey] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
+
+  // Load saved values from localStorage on component mount
+  useEffect(() => {
+    const savedApiKey = localStorage.getItem("apiKey");
+    const savedModelValue = localStorage.getItem("selectedModel");
+
+    if (savedApiKey) {
+      setApiKey(savedApiKey);
+    }
+
+    if (savedModelValue) {
+      const savedModel = modelOptions.find((m) => m.value === savedModelValue);
+      if (savedModel) {
+        setModel(savedModel);
+      }
+    }
+  }, []);
+
+  // Save API key to localStorage when it changes
+  const handleApiKeyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newApiKey = e.target.value;
+    setApiKey(newApiKey);
+    localStorage.setItem("apiKey", newApiKey);
+  };
+
+  // Save model selection to localStorage when it changes
+  const handleModelChange = (value: string) => {
+    const newModel = modelOptions.find((m) => m.value === value)!;
+    setModel(newModel);
+    localStorage.setItem("selectedModel", value);
+  };
 
   const handleGenerateData = async () => {
     try {
       setIsLoading(true);
-      console.log(inputJsonData);
-      const result = await generateData(inputJsonData, context, model);
+      const result = await generateData(inputJsonData, context, model, apiKey);
       if (result.success) {
         if (result.result) {
-          setJsonData(result.result);
+          const jsonResult = JSON.parse(result.result);
+          setJsonData(jsonResult);
         }
       } else {
-        console.error("Generation failed:", result.error);
-        // TODO: Show error message to user
+        toast({
+          title: "Error",
+          description: result.error,
+          variant: "destructive",
+        });
       }
-    } catch (error) {
-      console.error("Error generating data:", error);
-      // TODO: Show error message to user
+    } catch {
+      toast({
+        title: "Error",
+        description: "Failed to generate data",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -65,19 +104,20 @@ export function NavBar() {
     <nav className="border-b bg-white">
       <div className="flex h-16 items-center justify-between px-4">
         <div className="flex items-center space-x-4">
-          <h1 className="text-xl font-semibold">JSON Builder</h1>
+          <h1 className="text-xl font-semibold">Mock Data Generator</h1>
           <span className="text-sm text-muted-foreground">
             Generate mock data from your JSON schema
           </span>
         </div>
         <div className="flex items-center space-x-1">
-          <Input type="password" placeholder="Enter API Key" className="w-64" />
-          <Select
-            value={model.value}
-            onValueChange={(value) =>
-              setModel(modelOptions.find((m) => m.value === value)!)
-            }
-          >
+          <Input
+            type="password"
+            placeholder="Enter API Key"
+            className="w-64"
+            value={apiKey}
+            onChange={handleApiKeyChange}
+          />
+          <Select value={model.value} onValueChange={handleModelChange}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Select model" />
             </SelectTrigger>
