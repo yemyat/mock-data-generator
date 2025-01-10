@@ -33,15 +33,20 @@ export default function Home() {
         <div className="border-b border-t bg-white">
           <div className="p-4 flex items-center justify-between border-b">
             <h2 className="text-lg font-medium">Or start with existing JSON</h2>
-            <Button variant="outline" size="sm" onClick={toggleJSONPaste}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={toggleJSONPaste}
+              className="flex items-center space-x-2"
+            >
               {isJSONPasteOpen ? (
                 <>
-                  <ChevronUp className="h-4 w-4 mr-2" />
+                  <ChevronUp size={16} />
                   Collapse
                 </>
               ) : (
                 <>
-                  <ChevronDown className="h-4 w-4 mr-2" />
+                  <ChevronDown size={16} />
                   Expand
                 </>
               )}
