@@ -2,7 +2,7 @@
 
 import { Model } from "@/components/NavBar";
 import { JSONValue } from "@/types/json";
-import { generateText } from "ai";
+import { cosineSimilarity, generateText } from "ai";
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { createOpenAI } from "@ai-sdk/openai";
 
@@ -40,6 +40,8 @@ export async function generateData(
   model: Model,
   apiKey: string
 ) {
+  console.log("Generating data...");
+  console.log(schema);
   try {
     const provider = getProvider(model, apiKey);
 

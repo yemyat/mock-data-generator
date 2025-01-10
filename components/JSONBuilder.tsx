@@ -73,7 +73,7 @@ export function JSONBuilder({ onUpdate, initialData }: JSONBuilderProps) {
           : item
       );
     } else {
-      return node.description;
+      return `${node.type}: ${node.description}`;
     }
   }, []);
 
