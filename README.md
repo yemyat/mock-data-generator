@@ -1,5 +1,19 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+# Mock Data Generator
+
+A powerful tool for generating realistic mock data based on JSON schemas. This project helps developers quickly create sample data for testing and development purposes.
+
+## Features
+
+- Visual JSON schema builder
+- Import existing JSON schemas
+- Add context descriptions for better data generation
+- Support for multiple AI models (Claude 3.5, GPT-4o)
+- Syntax highlighting for generated JSON data
+- Customizable number of rows to generate (up to 50)
+- Copy generated data to clipboard
+
 ## Getting Started
 
 First, run the development server:
@@ -16,9 +30,16 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Configuration
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The application requires an API key from either Anthropic (for Claude models) or OpenAI (for GPT models). You can enter your API key in the navigation bar.
+
+## TODOs
+
+- [ ] Add support for nested JSON objects
+- [ ] Add support for array types
+- [ ] Enhance type system to handle complex data structures
+- [ ] Add validation for nested schemas
 
 ## Learn More
 
