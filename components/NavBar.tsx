@@ -11,8 +11,16 @@ import {
   SelectValue,
 } from "./ui/select";
 import { useJSON } from "@/contexts/JSONContext";
+import { generateData } from "@/app/actions";
+import { useState } from "react";
 
-export const modelOptions = [
+export interface Model {
+  value: string;
+  label: string;
+  provider: string;
+}
+
+export const modelOptions: Model[] = [
   {
     value: "claude-3-5-sonnet-latest",
     label: "Claude 3.5 Sonnet",
@@ -28,7 +36,30 @@ export const modelOptions = [
 ];
 
 export function NavBar() {
-  const { jsonData } = useJSON();
+  const { jsonData, context, setJsonData } = useJSON();
+  const [model, setModel] = useState<Model>(modelOptions[0]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleGenerateData = async () => {
+    try {
+      setIsLoading(true);
+      const result = await generateData(jsonData, context, model);
+      if (result.success) {
+        if (result.result) {
+          setJsonData(result.result);
+        }
+      } else {
+        console.error("Generation failed:", result.error);
+        // TODO: Show error message to user
+      }
+    } catch (error) {
+      console.error("Error generating data:", error);
+      // TODO: Show error message to user
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <nav className="border-b bg-white">
       <div className="flex h-16 items-center justify-between px-4">
@@ -40,7 +71,12 @@ export function NavBar() {
         </div>
         <div className="flex items-center space-x-1">
           <Input type="password" placeholder="Enter API Key" className="w-64" />
-          <Select defaultValue="claude-3-5-sonnet-latest">
+          <Select
+            value={model.value}
+            onValueChange={(value) =>
+              setModel(modelOptions.find((m) => m.value === value)!)
+            }
+          >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Select model" />
             </SelectTrigger>
@@ -55,12 +91,11 @@ export function NavBar() {
           <Button
             variant="default"
             className="flex flex-row space-x-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white border-0"
-            onClick={() => {
-              console.log(jsonData);
-            }}
+            onClick={handleGenerateData}
+            disabled={isLoading}
           >
-            <Sparkles size={16} />
-            Generate Data
+            <Sparkles size={16} className={isLoading ? "animate-spin" : ""} />
+            {isLoading ? "Generating..." : "Generate Data"}
           </Button>
         </div>
       </div>

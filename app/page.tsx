@@ -9,10 +9,19 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useJSON } from "@/contexts/JSONContext";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function Home() {
-  const { jsonData, setJsonData, initialData, setInitialData } = useJSON();
+  const {
+    jsonData,
+    setJsonData,
+    initialData,
+    setInitialData,
+    context,
+    setContext,
+  } = useJSON();
   const [isJSONPasteOpen, setIsJSONPasteOpen] = useState(true);
+  const [isContextOpen, setIsContextOpen] = useState(true);
 
   const handleJSONPaste = (data: JSONValue) => {
     setInitialData(data);
@@ -24,6 +33,10 @@ export default function Home() {
     setIsJSONPasteOpen(!isJSONPasteOpen);
   };
 
+  const toggleContext = () => {
+    setIsContextOpen(!isContextOpen);
+  };
+
   return (
     <main className="flex-1 flex overflow-hidden">
       <div className="w-1/2 border-r flex flex-col">
@@ -31,6 +44,43 @@ export default function Home() {
           <JSONBuilder onUpdate={setJsonData} initialData={initialData} />
         </div>
         <div className="border-b border-t bg-white">
+          <div className="p-4 flex items-center justify-between border-b">
+            <h2 className="text-lg font-medium">Add context</h2>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={toggleContext}
+              className="flex items-center space-x-2"
+            >
+              {isContextOpen ? (
+                <>
+                  <ChevronUp size={16} />
+                  Collapse
+                </>
+              ) : (
+                <>
+                  <ChevronDown size={16} />
+                  Expand
+                </>
+              )}
+            </Button>
+          </div>
+          {isContextOpen && (
+            <div className="p-4 border-b">
+              <Card>
+                <CardContent className="p-4">
+                  <div className="space-y-4">
+                    <Textarea
+                      placeholder="Add some background context to your application so that AI can understand the data you're trying to generate better"
+                      value={context}
+                      onChange={(e) => setContext(e.target.value)}
+                      className="h-24 text-sm bg-white"
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
           <div className="p-4 flex items-center justify-between border-b">
             <h2 className="text-lg font-medium">Or start with existing JSON</h2>
             <Button

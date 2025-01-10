@@ -8,17 +8,27 @@ interface JSONContextType {
   setJsonData: (data: JSONValue) => void;
   initialData: JSONValue | null;
   setInitialData: (data: JSONValue | null) => void;
+  context: string;
+  setContext: (context: string) => void;
 }
 
 const JSONContext = createContext<JSONContextType | undefined>(undefined);
 
 export function JSONProvider({ children }: { children: ReactNode }) {
   const [jsonData, setJsonData] = useState<JSONValue>({});
+  const [context, setContext] = useState<string>("");
   const [initialData, setInitialData] = useState<JSONValue | null>(null);
 
   return (
     <JSONContext.Provider
-      value={{ jsonData, setJsonData, initialData, setInitialData }}
+      value={{
+        jsonData,
+        setJsonData,
+        initialData,
+        setInitialData,
+        context,
+        setContext,
+      }}
     >
       {children}
     </JSONContext.Provider>
