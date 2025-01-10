@@ -108,7 +108,6 @@ export function JSONBuilder({ onUpdate, initialData }: JSONBuilderProps) {
 
   const updateNode = (path: number[], updatedNode: JSONNode) => {
     setNodes((prevNodes) => {
-      console.log(prevNodes);
       const updatedNodes = [...prevNodes];
 
       if (path.length === 1) {

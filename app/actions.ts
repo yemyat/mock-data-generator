@@ -40,8 +40,6 @@ export async function generateData(
   model: Model,
   apiKey: string
 ) {
-  console.log("Generating data...");
-  console.log(schema);
   try {
     const provider = getProvider(model, apiKey);
 

@@ -74,32 +74,30 @@ export function NavBar() {
   };
 
   const handleGenerateData = async () => {
-    setIsLoading(true);
-    console.log(inputJsonData);
-    // try {
-
-    //   const result = await generateData(inputJsonData, context, model, apiKey);
-    //   if (result.success) {
-    //     if (result.result) {
-    //       const jsonResult = JSON.parse(result.result);
-    //       setJsonData(jsonResult);
-    //     }
-    //   } else {
-    //     toast({
-    //       title: "Error",
-    //       description: result.error,
-    //       variant: "destructive",
-    //     });
-    //   }
-    // } catch {
-    //   toast({
-    //     title: "Error",
-    //     description: "Failed to generate data",
-    //     variant: "destructive",
-    //   });
-    // } finally {
-    //   setIsLoading(false);
-    // }
+    try {
+      setIsLoading(true);
+      const result = await generateData(inputJsonData, context, model, apiKey);
+      if (result.success) {
+        if (result.result) {
+          const jsonResult = JSON.parse(result.result);
+          setJsonData(jsonResult);
+        }
+      } else {
+        toast({
+          title: "Error",
+          description: result.error,
+          variant: "destructive",
+        });
+      }
+    } catch {
+      toast({
+        title: "Error",
+        description: "Failed to generate data",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
