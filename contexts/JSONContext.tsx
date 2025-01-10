@@ -1,15 +1,15 @@
 "use client";
 
 import { createContext, useContext, useState, ReactNode } from "react";
-import { JSONValue } from "@/types/json";
+import { JSONObject } from "@/types/json";
 
 interface JSONContextType {
-  inputJsonData: JSONValue;
-  setInputJsonData: (data: JSONValue) => void;
-  outputJsonData: JSONValue;
-  setOutputJsonData: (data: JSONValue) => void;
-  initialData: JSONValue | null;
-  setInitialData: (data: JSONValue | null) => void;
+  inputJsonData: JSONObject;
+  setInputJsonData: (data: JSONObject) => void;
+  outputJsonData: JSONObject;
+  setOutputJsonData: (data: JSONObject) => void;
+  initialData: JSONObject | null;
+  setInitialData: (data: JSONObject | null) => void;
   context: string;
   setContext: (context: string) => void;
 }
@@ -17,10 +17,10 @@ interface JSONContextType {
 const JSONContext = createContext<JSONContextType | undefined>(undefined);
 
 export function JSONProvider({ children }: { children: ReactNode }) {
-  const [inputJsonData, setInputJsonData] = useState<JSONValue>({});
-  const [outputJsonData, setOutputJsonData] = useState<JSONValue>({});
+  const [inputJsonData, setInputJsonData] = useState<JSONObject>({});
+  const [outputJsonData, setOutputJsonData] = useState<JSONObject>({});
   const [context, setContext] = useState<string>("");
-  const [initialData, setInitialData] = useState<JSONValue | null>(null);
+  const [initialData, setInitialData] = useState<JSONObject | null>(null);
 
   return (
     <JSONContext.Provider

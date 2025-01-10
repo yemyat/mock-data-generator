@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { JSONValue } from "../types/json";
-import { ArrowRight, Eye } from "lucide-react";
+import { JSONObject } from "../types/json";
+import { ArrowUp } from "lucide-react";
 
 interface JSONPasteProps {
-  onPaste: (data: JSONValue) => void;
+  onPaste: (data: JSONObject) => void;
 }
 
 export function JSONPaste({ onPaste }: JSONPasteProps) {
@@ -15,10 +15,21 @@ export function JSONPaste({ onPaste }: JSONPasteProps) {
   const handlePaste = () => {
     try {
       const parsedJSON = JSON.parse(jsonInput);
+      if (
+        typeof parsedJSON !== "object" ||
+        parsedJSON === null ||
+        Array.isArray(parsedJSON)
+      ) {
+        throw new Error("Input must be a JSON object");
+      }
       onPaste(parsedJSON);
       setError(null);
-    } catch {
-      setError("Invalid JSON format – check your syntax and try again");
+    } catch (e) {
+      setError(
+        e instanceof Error
+          ? e.message
+          : "Invalid JSON format – check your syntax and try again"
+      );
     }
   };
 
@@ -32,9 +43,8 @@ export function JSONPaste({ onPaste }: JSONPasteProps) {
       />
       {error && <p className="text-destructive text-sm">{error}</p>}
       <Button onClick={handlePaste} className="w-full">
-        <Eye size={16} />
-        Visualize JSON
-        <ArrowRight className="ml-2 h-4 w-4" />
+        <ArrowUp size={16} />
+        Import JSON
       </Button>
     </div>
   );

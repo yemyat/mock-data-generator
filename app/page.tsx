@@ -1,29 +1,73 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { JSONBuilder } from "../components/JSONBuilder";
-import { JSONPreview } from "../components/JSONPreview";
 import { JSONPaste } from "../components/JSONPaste";
-import { JSONValue } from "../types/json";
+import { JSONObject } from "../types/json";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, Sparkles } from "lucide-react";
 import { useJSON } from "@/contexts/JSONContext";
 import { Textarea } from "@/components/ui/textarea";
-
+import { toast } from "@/hooks/use-toast";
+import { Slider } from "@/components/ui/slider";
+import { useChat } from "ai/react";
+import { Model, modelOptions } from "@/components/NavBar";
+import { JSONPreview } from "@/components/JSONPreview";
 export default function Home() {
   const {
     setInputJsonData,
-    outputJsonData,
     initialData,
     setInitialData,
     context,
     setContext,
+    inputJsonData,
   } = useJSON();
   const [isJSONPasteOpen, setIsJSONPasteOpen] = useState(true);
   const [isContextOpen, setIsContextOpen] = useState(true);
+  const [rowCount, setRowCount] = useState(10);
+  const [apiKey, setApiKey] = useState<string>("");
+  const [model, setModel] = useState<Model>(modelOptions[0]);
 
-  const handleJSONPaste = (data: JSONValue) => {
+  useEffect(() => {
+    const savedApiKey = localStorage.getItem("apiKey") || "";
+    const savedModelValue = localStorage.getItem("selectedModel");
+
+    // Set local state
+    setApiKey(savedApiKey);
+    if (savedModelValue) {
+      const savedModel = modelOptions.find((m) => m.value === savedModelValue);
+      if (savedModel) {
+        setModel(savedModel);
+      }
+    }
+  }, []);
+
+  const { messages, setInput, isLoading, handleSubmit } = useChat({
+    api: "/api/generate",
+    body: {
+      apiKey,
+      model,
+      context,
+      schema: inputJsonData,
+      rowCount,
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  useEffect(() => {
+    if (inputJsonData) {
+      setInput(JSON.stringify(inputJsonData, null, 2));
+    }
+  }, [inputJsonData, setInput]);
+
+  const handleJSONPaste = (data: JSONObject) => {
     setInitialData(data);
     setIsJSONPasteOpen(false);
   };
@@ -112,8 +156,35 @@ export default function Home() {
           )}
         </div>
       </div>
-      <div className="w-1/2 bg-white">
-        <JSONPreview data={outputJsonData} />
+      <div className="w-1/2 flex flex-col bg-white">
+        <div className="p-4 border-b">
+          <div className="flex items-center justify-between">
+            <div className="space-y-2 flex-1 mr-4">
+              <div className="text-sm font-medium">
+                Number of rows to generate: {rowCount}
+              </div>
+              <Slider
+                value={[rowCount]}
+                onValueChange={(value) => setRowCount(value[0])}
+                max={100}
+                min={1}
+                step={1}
+              />
+            </div>
+            <Button
+              variant="default"
+              className="flex flex-row space-x-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white border-0"
+              onClick={handleSubmit}
+              disabled={isLoading}
+            >
+              <Sparkles size={16} className={isLoading ? "animate-spin" : ""} />
+              <span>{isLoading ? "Generating..." : "Generate Data"}</span>
+            </Button>
+          </div>
+        </div>
+        <div className="w-full bg-white">
+          <JSONPreview messages={messages} />
+        </div>
       </div>
     </main>
   );

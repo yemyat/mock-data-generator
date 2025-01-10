@@ -1,7 +1,5 @@
 "use client";
 
-import { Sparkles } from "lucide-react";
-import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import {
   Select,
@@ -10,10 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { useJSON } from "@/contexts/JSONContext";
-import { generateData } from "@/app/actions";
 import { useEffect, useState } from "react";
-import { toast } from "@/hooks/use-toast";
 
 export interface Model {
   value: string;
@@ -37,10 +32,8 @@ export const modelOptions: Model[] = [
 ];
 
 export function NavBar() {
-  const { inputJsonData, context, setOutputJsonData: setJsonData } = useJSON();
   const [model, setModel] = useState<Model>(modelOptions[0]);
   const [apiKey, setApiKey] = useState<string>("");
-  const [isLoading, setIsLoading] = useState(false);
 
   // Load saved values from localStorage on component mount
   useEffect(() => {
@@ -73,33 +66,6 @@ export function NavBar() {
     localStorage.setItem("selectedModel", value);
   };
 
-  const handleGenerateData = async () => {
-    try {
-      setIsLoading(true);
-      const result = await generateData(inputJsonData, context, model, apiKey);
-      if (result.success) {
-        if (result.result) {
-          const jsonResult = JSON.parse(result.result);
-          setJsonData(jsonResult);
-        }
-      } else {
-        toast({
-          title: "Error",
-          description: result.error,
-          variant: "destructive",
-        });
-      }
-    } catch {
-      toast({
-        title: "Error",
-        description: "Failed to generate data",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return (
     <nav className="border-b bg-white">
       <div className="flex h-16 items-center justify-between px-4">
@@ -129,15 +95,6 @@ export function NavBar() {
               ))}
             </SelectContent>
           </Select>
-          <Button
-            variant="default"
-            className="flex flex-row space-x-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white border-0"
-            onClick={handleGenerateData}
-            disabled={isLoading}
-          >
-            <Sparkles size={16} className={isLoading ? "animate-spin" : ""} />
-            {isLoading ? "Generating..." : "Generate Data"}
-          </Button>
         </div>
       </div>
     </nav>

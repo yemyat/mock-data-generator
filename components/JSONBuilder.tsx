@@ -8,7 +8,7 @@ import { Info, PlusCircle } from "lucide-react";
 
 interface JSONBuilderProps {
   onUpdate: (data: JSONObject) => void;
-  initialData?: JSONObject;
+  initialData?: JSONObject | null;
 }
 
 export function JSONBuilder({ onUpdate, initialData }: JSONBuilderProps) {

@@ -1,20 +1,20 @@
-import { JSONValue } from "../types/json";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Copy, Check } from "lucide-react";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { githubGist } from "react-syntax-highlighter/dist/esm/styles/hljs";
+import { Message } from "ai";
 
-interface JSONPreviewProps {
-  data: JSONValue;
-}
-
-export function JSONPreview({ data }: JSONPreviewProps) {
+export function JSONPreview({ messages }: { messages: Message[] }) {
   const [copied, setCopied] = useState(false);
-  const jsonString = JSON.stringify(data, null, 2);
 
+  if (messages.length === 0) {
+    return null;
+  }
+
+  const assistantMessage = messages[messages.length - 1];
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(jsonString);
+    navigator.clipboard.writeText(assistantMessage.content);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -49,7 +49,7 @@ export function JSONPreview({ data }: JSONPreviewProps) {
         style={githubGist}
         className="text-sm font-mono"
       >
-        {jsonString}
+        {assistantMessage.content}
       </SyntaxHighlighter>
     </div>
   );
