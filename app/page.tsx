@@ -182,7 +182,7 @@ export default function Home() {
             </Button>
           </div>
         </div>
-        <div className="w-full bg-white">
+        <div className="w-full bg-white overflow-auto">
           <JSONPreview messages={messages} />
         </div>
       </div>
