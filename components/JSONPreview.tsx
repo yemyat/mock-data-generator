@@ -12,6 +12,11 @@ export function JSONPreview({ messages }: { messages: Message[] }) {
     return null;
   }
 
+  // Don't show if the last message is not an assistant message
+  if (messages[messages.length - 1].role !== "assistant") {
+    return null;
+  }
+
   const assistantMessage = messages[messages.length - 1];
   const copyToClipboard = () => {
     navigator.clipboard.writeText(assistantMessage.content);

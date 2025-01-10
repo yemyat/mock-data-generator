@@ -52,6 +52,9 @@ export default function Home() {
       schema: inputJsonData,
       rowCount,
     },
+    onFinish: () => {
+      setInput("Done");
+    },
     onError: (error) => {
       toast({
         title: "Error",
