@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { NodeTypeSelector } from "./NodeTypeSelector";
-import { JSONNode as JSONNodeType } from "../types/json";
+import { JSONNode as JSONNodeType, JSONValue } from "../types/json";
 import { PlusCircle, Trash2, ChevronDown, ChevronRight } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
@@ -44,7 +44,7 @@ export function JSONNode({
   };
 
   const handleValueChange = (newValue: string) => {
-    let parsedValue: any = newValue;
+    let parsedValue: JSONValue = newValue;
     if (node.type === "number") {
       parsedValue = Number(newValue) || 0;
     } else if (node.type === "boolean") {
@@ -59,7 +59,7 @@ export function JSONNode({
 
   const handleArrayCountChange = (newCount: number[]) => {
     setArrayCount(newCount[0]);
-    onUpdate({ ...node, arrayCount: newCount[0] });
+    onUpdate({ ...node });
   };
 
   const canHaveChildren = node.type === "object" || node.type === "array";
@@ -178,14 +178,15 @@ export function JSONNode({
             Array.isArray(node.value) &&
             node.value.length === 0 && (
               <div className="text-sm text-muted-foreground p-2 text-center border rounded-md">
-                Empty array. Click "Add Item" to add items.
+                Empty array. Click &quot;Add Item&quot; to add items.
               </div>
             )}
           {node.type === "object" &&
             typeof node.value === "object" &&
+            node.value !== null &&
             Object.keys(node.value).length === 0 && (
               <div className="text-sm text-muted-foreground p-2 text-center border rounded-md">
-                Empty object. Click "Add Field" to add properties.
+                Empty object. Click &quot;Add Field&quot; to add properties.
               </div>
             )}
         </div>

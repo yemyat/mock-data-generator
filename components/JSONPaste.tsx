@@ -1,26 +1,26 @@
-import { useState } from 'react'
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import { JSONValue } from '../types/json'
-import { ArrowRight } from 'lucide-react'
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { JSONValue } from "../types/json";
+import { ArrowRight } from "lucide-react";
 
 interface JSONPasteProps {
-  onPaste: (data: JSONValue) => void
+  onPaste: (data: JSONValue) => void;
 }
 
 export function JSONPaste({ onPaste }: JSONPasteProps) {
-  const [jsonInput, setJsonInput] = useState('')
-  const [error, setError] = useState<string | null>(null)
+  const [jsonInput, setJsonInput] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   const handlePaste = () => {
     try {
-      const parsedJSON = JSON.parse(jsonInput)
-      onPaste(parsedJSON)
-      setError(null)
-    } catch (e) {
-      setError('Invalid JSON format – check your syntax and try again')
+      const parsedJSON = JSON.parse(jsonInput);
+      onPaste(parsedJSON);
+      setError(null);
+    } catch {
+      setError("Invalid JSON format – check your syntax and try again");
     }
-  }
+  };
 
   return (
     <div className="space-y-4">
@@ -36,6 +36,5 @@ export function JSONPaste({ onPaste }: JSONPasteProps) {
         <ArrowRight className="ml-2 h-4 w-4" />
       </Button>
     </div>
-  )
+  );
 }
-

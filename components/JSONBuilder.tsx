@@ -10,6 +10,10 @@ interface JSONBuilderProps {
   initialData?: JSONValue;
 }
 
+interface JSONNodeWithArrayCount extends JSONNode {
+  arrayCount?: number;
+}
+
 export function JSONBuilder({ onUpdate, initialData }: JSONBuilderProps) {
   const [nodes, setNodes] = useState<JSONNode[]>([]);
 
@@ -27,14 +31,14 @@ export function JSONBuilder({ onUpdate, initialData }: JSONBuilderProps) {
     }
   }, [initialData]);
 
-  const getValueType = (value: any): JSONNode["type"] => {
+  const getValueType = (value: JSONValue): JSONNode["type"] => {
     if (Array.isArray(value)) return "array";
     if (value === null) return "null";
     if (typeof value === "object") return "object";
     return typeof value as JSONNode["type"];
   };
 
-  const convertToNodeValue = (value: any): any => {
+  const convertToNodeValue = (value: JSONValue): JSONValue => {
     if (Array.isArray(value)) {
       return value.map((item) => ({
         key: null,
@@ -75,7 +79,7 @@ export function JSONBuilder({ onUpdate, initialData }: JSONBuilderProps) {
     if (node.type === "object") {
       return Object.entries(node.value as JSONObject).reduce(
         (acc, [key, value]) => {
-          const childNode = value as JSONNode;
+          const childNode = value as unknown as JSONNode;
           acc[key] = nodeToJSON(childNode);
           return acc;
         },
@@ -83,7 +87,9 @@ export function JSONBuilder({ onUpdate, initialData }: JSONBuilderProps) {
       );
     } else if (node.type === "array") {
       return (node.value as JSONArray).map((item) =>
-        typeof item === "object" ? nodeToJSON(item as JSONNode) : item
+        typeof item === "object"
+          ? nodeToJSON(item as unknown as JSONNode)
+          : item
       );
     } else {
       return node.value;
@@ -105,7 +111,6 @@ export function JSONBuilder({ onUpdate, initialData }: JSONBuilderProps) {
       const updatedNodes = [...prevNodes];
 
       if (path.length === 1) {
-        // Updating a root node
         updatedNodes[path[0]] = updatedNode;
         return updatedNodes;
       }
@@ -115,9 +120,11 @@ export function JSONBuilder({ onUpdate, initialData }: JSONBuilderProps) {
         if (currentNode.type === "object") {
           currentNode = Object.values(currentNode.value as JSONObject)[
             path[i]
-          ] as JSONNode;
+          ] as unknown as JSONNode;
         } else if (currentNode.type === "array") {
-          currentNode = (currentNode.value as JSONArray)[path[i]] as JSONNode;
+          currentNode = (currentNode.value as JSONArray)[
+            path[i]
+          ] as unknown as JSONNode;
         }
       }
 
@@ -127,13 +134,14 @@ export function JSONBuilder({ onUpdate, initialData }: JSONBuilderProps) {
         if (oldKey !== updatedNode.key && updatedNode.key) {
           const newValue = { ...objectValue };
           delete newValue[oldKey];
-          newValue[updatedNode.key] = updatedNode;
+          newValue[updatedNode.key] = updatedNode.value;
           currentNode.value = newValue;
         } else {
-          objectValue[oldKey] = updatedNode;
+          objectValue[oldKey] = updatedNode.value;
         }
       } else if (currentNode.type === "array") {
-        (currentNode.value as JSONArray)[path[path.length - 1]] = updatedNode;
+        (currentNode.value as JSONArray)[path[path.length - 1]] =
+          updatedNode.value;
       }
 
       return updatedNodes;
@@ -155,9 +163,11 @@ export function JSONBuilder({ onUpdate, initialData }: JSONBuilderProps) {
         if (currentNode.type === "object") {
           currentNode = Object.values(currentNode.value as JSONObject)[
             path[i]
-          ] as JSONNode;
+          ] as unknown as JSONNode;
         } else if (currentNode.type === "array") {
-          currentNode = (currentNode.value as JSONArray)[path[i]] as JSONNode;
+          currentNode = (currentNode.value as JSONArray)[
+            path[i]
+          ] as unknown as JSONNode;
         }
       }
 
@@ -188,11 +198,11 @@ export function JSONBuilder({ onUpdate, initialData }: JSONBuilderProps) {
         if (currentNode.type === "object") {
           currentNode = Object.values(currentNode.value as JSONObject)[
             parentIndex[i]
-          ] as JSONNode;
+          ] as unknown as JSONNode;
         } else if (currentNode.type === "array") {
           currentNode = (currentNode.value as JSONArray)[
             parentIndex[i]
-          ] as JSONNode;
+          ] as unknown as JSONNode;
         }
       }
 
@@ -206,7 +216,7 @@ export function JSONBuilder({ onUpdate, initialData }: JSONBuilderProps) {
         };
         currentNode.value = updatedValue;
       } else if (currentNode.type === "array") {
-        (currentNode.value as JSONArray).push(newNode);
+        (currentNode.value as JSONArray).push(nodeToJSON(newNode));
       }
 
       return updatedNodes;
@@ -216,13 +226,13 @@ export function JSONBuilder({ onUpdate, initialData }: JSONBuilderProps) {
   const generateData = () => {
     const jsonData = nodesToJSON(nodes);
     console.log("JSON data before generation:", jsonData);
-    const generatedData = generateSyntheticData({
+    const rootNode: JSONNodeWithArrayCount = {
       type: "object",
       value: jsonData,
       key: null,
       description: "",
-      arrayCount: undefined,
-    });
+    };
+    const generatedData = generateSyntheticData(rootNode);
     console.log("Generated data:", generatedData);
     if (generatedData !== null) {
       onUpdate(generatedData);
@@ -236,7 +246,7 @@ export function JSONBuilder({ onUpdate, initialData }: JSONBuilderProps) {
       <JSONNodeComponent
         key={index.join("-")}
         node={node}
-        onUpdate={(updatedNode) => updateNode(index, updatedNode)}
+        onUpdate={(updatedNode: JSONNode) => updateNode(index, updatedNode)}
         onDelete={() => deleteNode(index)}
         onAddChild={() => addChildNode(index)}
         depth={depth}
@@ -245,8 +255,8 @@ export function JSONBuilder({ onUpdate, initialData }: JSONBuilderProps) {
     );
   };
 
-  const renderTree = (nodes: JSONNode[], parentIndex: number[] = []) => {
-    return nodes.map((node, i) => {
+  const renderTree = (nodeArray: JSONNode[], parentIndex: number[] = []) => {
+    return nodeArray.map((node, i) => {
       const currentIndex = [...parentIndex, i];
       return (
         <div key={currentIndex.join("-")}>
@@ -255,11 +265,20 @@ export function JSONBuilder({ onUpdate, initialData }: JSONBuilderProps) {
             <div className="ml-4">
               {node.type === "object" &&
                 renderTree(
-                  Object.values(node.value as JSONObject),
+                  Object.values(node.value as JSONObject).map((v) => ({
+                    ...(v as unknown as JSONNode),
+                    value: (v as unknown as JSONNode).value,
+                  })),
                   currentIndex
                 )}
               {node.type === "array" &&
-                renderTree(node.value as JSONArray, currentIndex)}
+                renderTree(
+                  (node.value as JSONArray).map((v) => ({
+                    ...(v as unknown as JSONNode),
+                    value: (v as unknown as JSONNode).value,
+                  })),
+                  currentIndex
+                )}
             </div>
           )}
         </div>
