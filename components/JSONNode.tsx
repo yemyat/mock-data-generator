@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, memo } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { NodeTypeSelector } from "./NodeTypeSelector";
@@ -17,7 +17,7 @@ interface JSONNodeProps {
   index?: number;
 }
 
-export function JSONNode({
+export const JSONNode = memo(function JSONNode({
   node,
   onUpdate,
   onDelete,
@@ -145,4 +145,4 @@ export function JSONNode({
       )}
     </div>
   );
-}
+});

@@ -19,7 +19,7 @@ export function JSONPreview({ data }: JSONPreviewProps) {
   return (
     <div className="p-4 h-full flex flex-col">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">JSON Preview</h2>
+        <h2 className="text-xl font-medium">Generated Data</h2>
         <div className="flex flex-row space-x-2">
           <Button
             onClick={copyToClipboard}

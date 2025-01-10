@@ -73,7 +73,7 @@ export function JSONBuilder({ onUpdate, initialData }: JSONBuilderProps) {
           : item
       );
     } else {
-      return node.value;
+      return node.description;
     }
   }, []);
 
@@ -269,7 +269,7 @@ export function JSONBuilder({ onUpdate, initialData }: JSONBuilderProps) {
   return (
     <div className="p-4 h-full overflow-auto">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl">Structure your JSON visually</h2>
+        <h2 className="text-xl font-medium">Structure your JSON visually</h2>
         <div className="space-x-2">
           <Button
             onClick={addRootNode}

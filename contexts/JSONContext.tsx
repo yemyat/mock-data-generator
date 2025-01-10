@@ -4,6 +4,8 @@ import { createContext, useContext, useState, ReactNode } from "react";
 import { JSONValue } from "@/types/json";
 
 interface JSONContextType {
+  inputJsonData: JSONValue;
+  setInputJsonData: (data: JSONValue) => void;
   outputJsonData: JSONValue;
   setOutputJsonData: (data: JSONValue) => void;
   initialData: JSONValue | null;
@@ -15,15 +17,18 @@ interface JSONContextType {
 const JSONContext = createContext<JSONContextType | undefined>(undefined);
 
 export function JSONProvider({ children }: { children: ReactNode }) {
-  const [jsonData, setJsonData] = useState<JSONValue>({});
+  const [inputJsonData, setInputJsonData] = useState<JSONValue>({});
+  const [outputJsonData, setOutputJsonData] = useState<JSONValue>({});
   const [context, setContext] = useState<string>("");
   const [initialData, setInitialData] = useState<JSONValue | null>(null);
 
   return (
     <JSONContext.Provider
       value={{
-        outputJsonData: jsonData,
-        setOutputJsonData: setJsonData,
+        inputJsonData,
+        setInputJsonData,
+        outputJsonData,
+        setOutputJsonData,
         initialData,
         setInitialData,
         context,

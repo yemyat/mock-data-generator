@@ -36,18 +36,15 @@ export const modelOptions: Model[] = [
 ];
 
 export function NavBar() {
-  const {
-    outputJsonData: jsonData,
-    context,
-    setOutputJsonData: setJsonData,
-  } = useJSON();
+  const { inputJsonData, context, setOutputJsonData: setJsonData } = useJSON();
   const [model, setModel] = useState<Model>(modelOptions[0]);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleGenerateData = async () => {
     try {
       setIsLoading(true);
-      const result = await generateData(jsonData, context, model);
+      console.log(inputJsonData);
+      const result = await generateData(inputJsonData, context, model);
       if (result.success) {
         if (result.result) {
           setJsonData(result.result);
