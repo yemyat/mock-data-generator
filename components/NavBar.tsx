@@ -36,7 +36,11 @@ export const modelOptions: Model[] = [
 ];
 
 export function NavBar() {
-  const { jsonData, context, setJsonData } = useJSON();
+  const {
+    outputJsonData: jsonData,
+    context,
+    setOutputJsonData: setJsonData,
+  } = useJSON();
   const [model, setModel] = useState<Model>(modelOptions[0]);
   const [isLoading, setIsLoading] = useState(false);
 

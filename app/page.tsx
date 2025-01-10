@@ -13,8 +13,8 @@ import { Textarea } from "@/components/ui/textarea";
 
 export default function Home() {
   const {
-    jsonData,
-    setJsonData,
+    outputJsonData,
+    setOutputJsonData,
     initialData,
     setInitialData,
     context,
@@ -25,7 +25,7 @@ export default function Home() {
 
   const handleJSONPaste = (data: JSONValue) => {
     setInitialData(data);
-    setJsonData(data);
+    setOutputJsonData(data);
     setIsJSONPasteOpen(false);
   };
 
@@ -41,7 +41,7 @@ export default function Home() {
     <main className="flex-1 flex overflow-hidden">
       <div className="w-1/2 border-r flex flex-col">
         <div className="flex-1 overflow-auto bg-background">
-          <JSONBuilder onUpdate={setJsonData} initialData={initialData} />
+          <JSONBuilder onUpdate={setOutputJsonData} initialData={initialData} />
         </div>
         <div className="border-b border-t bg-white">
           <div className="p-4 flex items-center justify-between border-b">
@@ -114,7 +114,7 @@ export default function Home() {
         </div>
       </div>
       <div className="w-1/2 bg-white">
-        <JSONPreview data={jsonData} />
+        <JSONPreview data={outputJsonData} />
       </div>
     </main>
   );
