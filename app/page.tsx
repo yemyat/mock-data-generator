@@ -27,9 +27,12 @@ export default function Home() {
   return (
     <main className="flex-1 flex overflow-hidden">
       <div className="w-1/2 border-r flex flex-col">
-        <div className="border-b bg-white">
+        <div className="flex-1 overflow-auto bg-background">
+          <JSONBuilder onUpdate={setJsonData} initialData={initialData} />
+        </div>
+        <div className="border-b border-t bg-white">
           <div className="p-4 flex items-center justify-between border-b">
-            <h2 className="text-lg font-medium">Start with existing JSON</h2>
+            <h2 className="text-lg font-medium">Or start with existing JSON</h2>
             <Button
               variant="ghost"
               size="sm"
@@ -50,7 +53,7 @@ export default function Home() {
             </Button>
           </div>
           {isJSONPasteOpen && (
-            <div className="px-4 pb-4">
+            <div className="p-4">
               <Card>
                 <CardContent className="pt-4">
                   <JSONPaste onPaste={handleJSONPaste} />
@@ -58,9 +61,6 @@ export default function Home() {
               </Card>
             </div>
           )}
-        </div>
-        <div className="flex-1 overflow-auto bg-background">
-          <JSONBuilder onUpdate={setJsonData} initialData={initialData} />
         </div>
       </div>
       <div className="w-1/2 bg-white">
