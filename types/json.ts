@@ -1,11 +1,12 @@
-export type JSONValue = string | number | boolean | null | JSONObject | JSONArray;
-export interface JSONObject { [key: string]: JSONValue }
-export type JSONArray = JSONValue[];
+export type JSONValue = string | number | boolean | null;
 
 export interface JSONNode {
-  key: string | null;
+  key: string;
   value: JSONValue;
-  type: 'object' | 'array' | 'string' | 'number' | 'boolean' | 'null';
+  type: "string" | "number" | "boolean" | "null";
   description: string;
 }
 
+export interface JSONObject {
+  [key: string]: JSONValue;
+}

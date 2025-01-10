@@ -3,11 +3,10 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Box, Type, List, ToggleLeft, Hash, Ban } from 'lucide-react'
+} from "@/components/ui/select";
+import { Type, ToggleLeft, Hash, Ban } from "lucide-react";
 
 interface NodeTypeSelectorProps {
   value: string;
@@ -22,20 +21,6 @@ export function NodeTypeSelector({ value, onChange }: NodeTypeSelectorProps) {
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          <SelectLabel>Complex Types</SelectLabel>
-          <SelectItem value="object">
-            <div className="flex items-center gap-2">
-              <Box className="h-4 w-4" />
-              Object
-            </div>
-          </SelectItem>
-          <SelectItem value="array">
-            <div className="flex items-center gap-2">
-              <List className="h-4 w-4" />
-              Array
-            </div>
-          </SelectItem>
-          <SelectLabel>Simple Types</SelectLabel>
           <SelectItem value="string">
             <div className="flex items-center gap-2">
               <Type className="h-4 w-4" />
@@ -63,6 +48,5 @@ export function NodeTypeSelector({ value, onChange }: NodeTypeSelectorProps) {
         </SelectGroup>
       </SelectContent>
     </Select>
-  )
+  );
 }
-
