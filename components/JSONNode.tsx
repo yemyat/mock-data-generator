@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, memo } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -81,7 +83,7 @@ export const JSONNode = memo(function JSONNode({
             </div>
             {node.type !== "null" && (
               <Input
-                value={node.description}
+                value={node.description || ""}
                 onChange={(e) => handleDescriptionChange(e.target.value)}
                 placeholder="Describe the data in this node. Use examples for better accuracy."
                 className="w-full h-8 text-sm"

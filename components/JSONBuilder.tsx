@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect, useCallback } from "react";
 import { JSONNode as JSONNodeComponent } from "./JSONNode";
 import { JSONNode, JSONObject, JSONArray, JSONValue } from "../types/json";
@@ -106,6 +108,7 @@ export function JSONBuilder({ onUpdate, initialData }: JSONBuilderProps) {
 
   const updateNode = (path: number[], updatedNode: JSONNode) => {
     setNodes((prevNodes) => {
+      console.log(prevNodes);
       const updatedNodes = [...prevNodes];
 
       if (path.length === 1) {

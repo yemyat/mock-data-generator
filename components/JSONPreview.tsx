@@ -1,12 +1,9 @@
-"use client";
-
 import { JSONValue } from "../types/json";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Copy, Check } from "lucide-react";
-import Prism from "prismjs";
-import "prismjs/components/prism-json";
-import styles from "./JSONPreview.module.css";
+import SyntaxHighlighter from "react-syntax-highlighter";
+import { githubGist } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
 interface JSONPreviewProps {
   data: JSONValue;
@@ -14,20 +11,10 @@ interface JSONPreviewProps {
 
 export function JSONPreview({ data }: JSONPreviewProps) {
   const [copied, setCopied] = useState(false);
-  const [highlighted, setHighlighted] = useState("");
-
-  useEffect(() => {
-    const jsonString = JSON.stringify(data, null, 2);
-    const highlighted = Prism.highlight(
-      jsonString,
-      Prism.languages.json,
-      "json"
-    );
-    setHighlighted(highlighted);
-  }, [data]);
+  const jsonString = JSON.stringify(data, null, 2);
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(JSON.stringify(data, null, 2));
+    navigator.clipboard.writeText(jsonString);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -57,14 +44,13 @@ export function JSONPreview({ data }: JSONPreviewProps) {
           </Button>
         </div>
       </div>
-      <pre
-        className={`bg-muted p-4 rounded-lg overflow-auto flex-grow text-sm ${styles.jsonPreview}`}
+      <SyntaxHighlighter
+        language="json"
+        style={githubGist}
+        className="text-sm font-mono"
       >
-        <code
-          className="language-json"
-          dangerouslySetInnerHTML={{ __html: highlighted }}
-        />
-      </pre>
+        {jsonString}
+      </SyntaxHighlighter>
     </div>
   );
 }
