@@ -32,7 +32,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## Configuration
 
-The application requires an API key from either Anthropic (for Claude models) or OpenAI (for GPT models). You can enter your API key in the navigation bar.
+No config needed.
 
 ## TODOs
 
@@ -40,15 +40,6 @@ The application requires an API key from either Anthropic (for Claude models) or
 - [ ] Add support for array types
 - [ ] Enhance type system to handle complex data structures
 - [ ] Add validation for nested schemas
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
 ## Deploy on Vercel
 
