@@ -1,11 +1,18 @@
 import type { Metadata } from "next";
-import { Instrument_Sans } from "next/font/google";
+import { Instrument_Sans, Fira_Code } from "next/font/google";
 import "./globals.css";
 import { NavBar } from "@/components/NavBar";
 
 const instrumentSans = Instrument_Sans({
   variable: "--font-instrument-sans",
   subsets: ["latin"],
+});
+
+const firaCode = Fira_Code({
+  variable: "--font-fira-mono",
+  subsets: ["latin"],
+  display: "swap",
+  adjustFontFallback: false,
 });
 
 export const metadata: Metadata = {
@@ -20,7 +27,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${instrumentSans.variable} antialiased`}>
+      <body
+        className={`${instrumentSans.variable} ${firaCode.variable} antialiased`}
+      >
         <div className="flex flex-col h-screen bg-background">
           <NavBar />
           {children}

@@ -2,9 +2,8 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { NodeTypeSelector } from "./NodeTypeSelector";
-import { JSONNode as JSONNodeType, JSONValue } from "../types/json";
-import { PlusCircle, Trash2, ChevronDown, ChevronRight } from "lucide-react";
-import { Textarea } from "@/components/ui/textarea";
+import { JSONNode as JSONNodeType } from "../types/json";
+import { Trash2, Info, Plus } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 
 interface JSONNodeProps {
@@ -28,7 +27,7 @@ export function JSONNode({
   parentType,
   index,
 }: JSONNodeProps) {
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded] = useState(true);
   const [arrayCount, setArrayCount] = useState(1);
 
   const handleKeyChange = (newKey: string) => {
@@ -43,16 +42,6 @@ export function JSONNode({
     });
   };
 
-  const handleValueChange = (newValue: string) => {
-    let parsedValue: JSONValue = newValue;
-    if (node.type === "number") {
-      parsedValue = Number(newValue) || 0;
-    } else if (node.type === "boolean") {
-      parsedValue = newValue === "true";
-    }
-    onUpdate({ ...node, value: parsedValue });
-  };
-
   const handleDescriptionChange = (newDescription: string) => {
     onUpdate({ ...node, description: newDescription });
   };
@@ -63,31 +52,16 @@ export function JSONNode({
   };
 
   const canHaveChildren = node.type === "object" || node.type === "array";
-  const showValue = !canHaveChildren && node.type !== "null";
   const nodeLabel =
     parentType === "array" ? `Item ${index! + 1}` : node.key || "Root";
 
   return (
     <div
-      className="border rounded-lg my-2 bg-background shadow-sm"
+      className="border rounded-lg my-2 bg-white shadow-sm"
       style={{ marginLeft: `${depth * 12}px` }}
     >
-      <div className="p-3">
-        <div className="flex items-center gap-2 mb-2">
-          {canHaveChildren && (
-            <Button
-              onClick={() => setIsExpanded(!isExpanded)}
-              variant="ghost"
-              size="sm"
-              className="p-1 h-6 w-6"
-            >
-              {isExpanded ? (
-                <ChevronDown className="h-4 w-4" />
-              ) : (
-                <ChevronRight className="h-4 w-4" />
-              )}
-            </Button>
-          )}
+      <div className="p-2 flex flex-col space-y-2">
+        <div className="flex items-center gap-2">
           <div className="flex items-center gap-2 flex-1">
             <Input
               value={node.key || ""}
@@ -105,25 +79,14 @@ export function JSONNode({
             <div className="flex items-center gap-2">
               <NodeTypeSelector value={node.type} onChange={handleTypeChange} />
             </div>
-            {showValue && (
-              <div className="flex-1">
-                {node.type === "string" ? (
-                  <Textarea
-                    value={(node.value as string) || ""}
-                    onChange={(e) => handleValueChange(e.target.value)}
-                    placeholder="Value"
-                    className="min-h-[60px] text-sm"
-                  />
-                ) : (
-                  <Input
-                    value={String(node.value || "")}
-                    onChange={(e) => handleValueChange(e.target.value)}
-                    placeholder="Value"
-                    className="h-8 text-sm"
-                    type={node.type === "number" ? "number" : "text"}
-                  />
-                )}
-              </div>
+            {node.type !== "null" && (
+              <Input
+                value={node.description}
+                onChange={(e) => handleDescriptionChange(e.target.value)}
+                placeholder="Describe the data in this node. Use examples for better accuracy."
+                className="w-full h-8 text-sm"
+                required
+              />
             )}
           </div>
           <div className="flex items-center gap-2">
@@ -132,32 +95,19 @@ export function JSONNode({
                 onClick={onAddChild}
                 variant="outline"
                 size="sm"
-                className="h-8"
+                className="flex flex-row items-center justify-center"
               >
-                <PlusCircle className="h-4 w-4 mr-2" />
-                Add {node.type === "array" ? "Item" : "Field"}
+                <Plus size={16} />
+                <span>Add {node.type === "array" ? "Entry" : "Key"}</span>
               </Button>
             )}
-            <Button
-              onClick={onDelete}
-              variant="outline"
-              size="sm"
-              className="h-8"
-            >
-              <Trash2 className="h-4 w-4" />
+            <Button onClick={onDelete} variant="outline" size="sm">
+              <Trash2 size={16} />
             </Button>
           </div>
         </div>
-        {node.type !== "null" && (
-          <Input
-            value={node.description}
-            onChange={(e) => handleDescriptionChange(e.target.value)}
-            placeholder="Description (optional)"
-            className="w-full h-8 text-sm"
-          />
-        )}
         {node.type === "array" && (
-          <div className="mt-2">
+          <div className="flex flex-col space-y-2 my-2">
             <label className="text-sm font-medium">
               Number of items to generate: {arrayCount}
             </label>
@@ -167,18 +117,20 @@ export function JSONNode({
               max={25}
               min={1}
               step={1}
-              className="mt-2"
             />
           </div>
         )}
       </div>
       {isExpanded && canHaveChildren && (
-        <div className="px-3 pb-3">
+        <div className="px-2">
           {node.type === "array" &&
             Array.isArray(node.value) &&
             node.value.length === 0 && (
-              <div className="text-sm text-muted-foreground p-2 text-center border rounded-md">
-                Empty array. Click &quot;Add Item&quot; to add items.
+              <div className="text-sm text-muted-foreground p-2 text-center border rounded-md flex flex-row space-x-2 items-center justify-center bg-background mt-2">
+                <Info size={16} />
+                <span>
+                  Empty array. Click &quot;Add Item&quot; to add array entries.
+                </span>
               </div>
             )}
           {node.type === "object" &&
@@ -186,7 +138,7 @@ export function JSONNode({
             node.value !== null &&
             Object.keys(node.value).length === 0 && (
               <div className="text-sm text-muted-foreground p-2 text-center border rounded-md">
-                Empty object. Click &quot;Add Field&quot; to add properties.
+                Empty object. Click &quot;Add Child Key&quot; to add properties.
               </div>
             )}
         </div>

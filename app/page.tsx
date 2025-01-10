@@ -33,12 +33,7 @@ export default function Home() {
         <div className="border-b border-t bg-white">
           <div className="p-4 flex items-center justify-between border-b">
             <h2 className="text-lg font-medium">Or start with existing JSON</h2>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="hover:bg-accent hover:text-accent-foreground p-2"
-              onClick={toggleJSONPaste}
-            >
+            <Button variant="outline" size="sm" onClick={toggleJSONPaste}>
               {isJSONPasteOpen ? (
                 <>
                   <ChevronUp className="h-4 w-4 mr-2" />

@@ -1,44 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { JSONNode as JSONNodeComponent } from "./JSONNode";
 import { JSONNode, JSONObject, JSONArray, JSONValue } from "../types/json";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Wand2 } from "lucide-react";
-import { generateSyntheticData } from "../utils/dataGenerator";
+import { Info, PlusCircle } from "lucide-react";
 
 interface JSONBuilderProps {
   onUpdate: (data: JSONValue) => void;
   initialData?: JSONValue;
 }
 
-interface JSONNodeWithArrayCount extends JSONNode {
-  arrayCount?: number;
-}
-
 export function JSONBuilder({ onUpdate, initialData }: JSONBuilderProps) {
   const [nodes, setNodes] = useState<JSONNode[]>([]);
 
-  useEffect(() => {
-    if (initialData) {
-      const initialNodes = Object.entries(initialData as JSONObject).map(
-        ([key, value]) => ({
-          key,
-          value: convertToNodeValue(value),
-          type: getValueType(value),
-          description: "",
-        })
-      );
-      setNodes(initialNodes);
-    }
-  }, [initialData]);
-
-  const getValueType = (value: JSONValue): JSONNode["type"] => {
-    if (Array.isArray(value)) return "array";
-    if (value === null) return "null";
-    if (typeof value === "object") return "object";
-    return typeof value as JSONNode["type"];
-  };
-
-  const convertToNodeValue = (value: JSONValue): JSONValue => {
+  const convertToNodeValue = useCallback((value: JSONValue): JSONValue => {
     if (Array.isArray(value)) {
       return value.map((item) => ({
         key: null,
@@ -59,23 +33,30 @@ export function JSONBuilder({ onUpdate, initialData }: JSONBuilderProps) {
       }, {} as JSONObject);
     }
     return value;
-  };
+  }, []);
 
   useEffect(() => {
-    const jsonData = nodesToJSON(nodes);
-    onUpdate(jsonData);
-  }, [nodes, onUpdate]);
+    if (initialData) {
+      const initialNodes = Object.entries(initialData as JSONObject).map(
+        ([key, value]) => ({
+          key,
+          value: convertToNodeValue(value),
+          type: getValueType(value),
+          description: "",
+        })
+      );
+      setNodes(initialNodes);
+    }
+  }, [convertToNodeValue, initialData]);
 
-  const nodesToJSON = (nodes: JSONNode[]): JSONValue => {
-    return nodes.reduce((acc, node) => {
-      if (node.key) {
-        acc[node.key] = nodeToJSON(node);
-      }
-      return acc;
-    }, {} as JSONObject);
+  const getValueType = (value: JSONValue): JSONNode["type"] => {
+    if (Array.isArray(value)) return "array";
+    if (value === null) return "null";
+    if (typeof value === "object") return "object";
+    return typeof value as JSONNode["type"];
   };
 
-  const nodeToJSON = (node: JSONNode): JSONValue => {
+  const nodeToJSON = useCallback((node: JSONNode): JSONValue => {
     if (node.type === "object") {
       return Object.entries(node.value as JSONObject).reduce(
         (acc, [key, value]) => {
@@ -94,7 +75,24 @@ export function JSONBuilder({ onUpdate, initialData }: JSONBuilderProps) {
     } else {
       return node.value;
     }
-  };
+  }, []);
+
+  const nodesToJSON = useCallback(
+    (nodes: JSONNode[]): JSONValue => {
+      return nodes.reduce((acc, node) => {
+        if (node.key) {
+          acc[node.key] = nodeToJSON(node);
+        }
+        return acc;
+      }, {} as JSONObject);
+    },
+    [nodeToJSON]
+  );
+
+  useEffect(() => {
+    const jsonData = nodesToJSON(nodes);
+    onUpdate(jsonData);
+  }, [nodes, nodesToJSON, onUpdate]);
 
   const addRootNode = () => {
     const newNode: JSONNode = {
@@ -223,24 +221,6 @@ export function JSONBuilder({ onUpdate, initialData }: JSONBuilderProps) {
     });
   };
 
-  const generateData = () => {
-    const jsonData = nodesToJSON(nodes);
-    console.log("JSON data before generation:", jsonData);
-    const rootNode: JSONNodeWithArrayCount = {
-      type: "object",
-      value: jsonData,
-      key: null,
-      description: "",
-    };
-    const generatedData = generateSyntheticData(rootNode);
-    console.log("Generated data:", generatedData);
-    if (generatedData !== null) {
-      onUpdate(generatedData);
-    } else {
-      console.error("Failed to generate data");
-    }
-  };
-
   const renderNode = (node: JSONNode, index: number[], depth: number) => {
     return (
       <JSONNodeComponent
@@ -295,15 +275,17 @@ export function JSONBuilder({ onUpdate, initialData }: JSONBuilderProps) {
             <PlusCircle className="h-4 w-4 mr-2" />
             Add Root Key
           </Button>
-          <Button onClick={generateData} size="sm" variant="secondary">
-            <Wand2 className="h-4 w-4 mr-2" />
-            Generate Data
-          </Button>
         </div>
       </div>
       {nodes.length === 0 ? (
-        <div className="text-center text-muted-foreground p-8 border rounded-lg">
-          Click &quot;Add Root Key&quot; to start building your JSON structure
+        <div className="text-center text-muted-foreground p-8 border rounded-lg flex flex-col items-center justify-center">
+          <div className="flex flex-row space-x-2 items-center">
+            <Info size={16} />
+            <span>
+              Click &quot;Add Root Key&quot; to start building your JSON
+              structure
+            </span>
+          </div>
         </div>
       ) : (
         renderTree(nodes)
