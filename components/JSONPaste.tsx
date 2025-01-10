@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { JSONValue } from "../types/json";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Eye } from "lucide-react";
 
 interface JSONPasteProps {
   onPaste: (data: JSONValue) => void;
@@ -28,10 +28,11 @@ export function JSONPaste({ onPaste }: JSONPasteProps) {
         placeholder="Paste your JSON here to get started..."
         value={jsonInput}
         onChange={(e) => setJsonInput(e.target.value)}
-        className="h-40 font-mono text-sm"
+        className="h-40 font-mono text-sm bg-white"
       />
       {error && <p className="text-destructive text-sm">{error}</p>}
       <Button onClick={handlePaste} className="w-full">
+        <Eye size={16} />
         Visualize JSON
         <ArrowRight className="ml-2 h-4 w-4" />
       </Button>

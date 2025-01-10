@@ -50,7 +50,7 @@ export default function Home() {
           {isJSONPasteOpen && (
             <div className="p-4">
               <Card>
-                <CardContent className="pt-4">
+                <CardContent className="p-4">
                   <JSONPaste onPaste={handleJSONPaste} />
                 </CardContent>
               </Card>

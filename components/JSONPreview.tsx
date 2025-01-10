@@ -1,43 +1,58 @@
-import { JSONValue } from '../types/json'
-import { useState } from 'react'
-import { Button } from "@/components/ui/button"
-import { Copy, Check } from 'lucide-react'
+import { JSONValue } from "../types/json";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Copy, Check, Sparkles } from "lucide-react";
 
 interface JSONPreviewProps {
-  data: JSONValue
+  data: JSONValue;
 }
 
 export function JSONPreview({ data }: JSONPreviewProps) {
-  const [copied, setCopied] = useState(false)
+  const [copied, setCopied] = useState(false);
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(JSON.stringify(data, null, 2))
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
+    navigator.clipboard.writeText(JSON.stringify(data, null, 2));
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
     <div className="p-4 h-full flex flex-col">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold">JSON Preview</h2>
-        <Button onClick={copyToClipboard} variant="outline" size="sm">
-          {copied ? (
-            <>
-              <Check className="h-4 w-4 mr-2" />
-              Copied!
-            </>
-          ) : (
-            <>
-              <Copy className="h-4 w-4 mr-2" />
-              Copy JSON
-            </>
-          )}
-        </Button>
+        <div className="flex flex-row space-x-2">
+          <Button
+            onClick={copyToClipboard}
+            variant="outline"
+            size="sm"
+            className="flex flex-row space-x-2"
+          >
+            {copied ? (
+              <>
+                <Check size={16} />
+                Copied!
+              </>
+            ) : (
+              <>
+                <Copy size={16} />
+                Copy JSON
+              </>
+            )}
+          </Button>
+          <Button
+            onClick={copyToClipboard}
+            variant="default"
+            size="sm"
+            className="flex flex-row space-x-2"
+          >
+            <Sparkles size={16} />
+            Generate Data
+          </Button>
+        </div>
       </div>
       <pre className="bg-muted p-4 rounded-lg overflow-auto flex-grow text-sm">
         {JSON.stringify(data, null, 2)}
       </pre>
     </div>
-  )
+  );
 }
-
