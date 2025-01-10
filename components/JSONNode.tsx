@@ -126,7 +126,7 @@ export function JSONNode({
           {node.type === "array" &&
             Array.isArray(node.value) &&
             node.value.length === 0 && (
-              <div className="text-sm text-muted-foreground p-2 text-center border rounded-md flex flex-row space-x-2 items-center justify-center bg-background mt-2">
+              <div className="text-sm text-muted-foreground p-2 text-center border rounded-md flex flex-row space-x-2 items-center justify-center bg-background my-2">
                 <Info size={16} />
                 <span>
                   Empty array. Click &quot;Add Item&quot; to add array entries.

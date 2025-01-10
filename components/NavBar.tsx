@@ -1,3 +1,5 @@
+"use client";
+
 import { Sparkles } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -8,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import { useJSON } from "@/contexts/JSONContext";
 
 export const modelOptions = [
   {
@@ -25,6 +28,7 @@ export const modelOptions = [
 ];
 
 export function NavBar() {
+  const { jsonData } = useJSON();
   return (
     <nav className="border-b bg-white">
       <div className="flex h-16 items-center justify-between px-4">
@@ -51,6 +55,9 @@ export function NavBar() {
           <Button
             variant="default"
             className="flex flex-row space-x-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white border-0"
+            onClick={() => {
+              console.log(jsonData);
+            }}
           >
             <Sparkles size={16} />
             Generate Data

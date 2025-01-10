@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Instrument_Sans, Fira_Code } from "next/font/google";
 import "./globals.css";
 import { NavBar } from "@/components/NavBar";
+import { JSONProvider } from "@/contexts/JSONContext";
 
 const instrumentSans = Instrument_Sans({
   variable: "--font-instrument-sans",
@@ -30,10 +31,12 @@ export default function RootLayout({
       <body
         className={`${instrumentSans.variable} ${firaCode.variable} antialiased`}
       >
-        <div className="flex flex-col h-screen bg-background">
-          <NavBar />
-          {children}
-        </div>
+        <JSONProvider>
+          <div className="flex flex-col h-screen bg-background">
+            <NavBar />
+            {children}
+          </div>
+        </JSONProvider>
       </body>
     </html>
   );

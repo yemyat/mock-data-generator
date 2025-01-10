@@ -8,10 +8,10 @@ import { JSONValue } from "../types/json";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { useJSON } from "@/contexts/JSONContext";
 
 export default function Home() {
-  const [jsonData, setJsonData] = useState<JSONValue>({});
-  const [initialData, setInitialData] = useState<JSONValue | null>(null);
+  const { jsonData, setJsonData, initialData, setInitialData } = useJSON();
   const [isJSONPasteOpen, setIsJSONPasteOpen] = useState(true);
 
   const handleJSONPaste = (data: JSONValue) => {
