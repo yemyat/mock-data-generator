@@ -125,7 +125,7 @@ export default function Home() {
             </div>
           )}
           <div className="p-4 flex items-center justify-between border-b">
-            <h2 className="text-lg font-medium">Or start with existing JSON</h2>
+            <h2 className="text-lg font-medium">Import existing JSON schema</h2>
             <Button
               variant="outline"
               size="sm"
@@ -166,7 +166,7 @@ export default function Home() {
               <Slider
                 value={[rowCount]}
                 onValueChange={(value) => setRowCount(value[0])}
-                max={100}
+                max={50}
                 min={1}
                 step={1}
               />
