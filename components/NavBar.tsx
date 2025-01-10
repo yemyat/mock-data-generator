@@ -1,3 +1,5 @@
+import { Sparkles } from "lucide-react";
+import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import {
   Select,
@@ -46,6 +48,13 @@ export function NavBar() {
               ))}
             </SelectContent>
           </Select>
+          <Button
+            variant="default"
+            className="flex flex-row space-x-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white border-0"
+          >
+            <Sparkles size={16} />
+            Generate Data
+          </Button>
         </div>
       </div>
     </nav>

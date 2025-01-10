@@ -271,8 +271,12 @@ export function JSONBuilder({ onUpdate, initialData }: JSONBuilderProps) {
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl">Structure your JSON visually</h2>
         <div className="space-x-2">
-          <Button onClick={addRootNode} size="sm">
-            <PlusCircle className="h-4 w-4 mr-2" />
+          <Button
+            onClick={addRootNode}
+            size="sm"
+            className="flex flex-row space-x-2"
+          >
+            <PlusCircle size={16} />
             Add Root Key
           </Button>
         </div>

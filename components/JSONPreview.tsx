@@ -1,7 +1,7 @@
 import { JSONValue } from "../types/json";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Copy, Check, Sparkles } from "lucide-react";
+import { Copy, Check } from "lucide-react";
 
 interface JSONPreviewProps {
   data: JSONValue;
@@ -38,15 +38,6 @@ export function JSONPreview({ data }: JSONPreviewProps) {
                 Copy JSON
               </>
             )}
-          </Button>
-          <Button
-            onClick={copyToClipboard}
-            variant="default"
-            size="sm"
-            className="flex flex-row space-x-2"
-          >
-            <Sparkles size={16} />
-            Generate Data
           </Button>
         </div>
       </div>
